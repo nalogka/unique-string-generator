@@ -1,0 +1,30 @@
+{
+    "name": "nalogka/unique-string-generator",
+    "keywords": ["nalogka", "unique string", "generator"],
+    "homepage": "https://bitbucket.org/nalogka/nalogka-unique-string-generator",
+    "description": "Пакет предоставляет функционал генерации рандомной строки и трансформацию ее в decimal для записи в базу",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anton Endiuskin",
+            "email": "ultoniq@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nalogka\\UniqueStringGenerator\\": "src/"
+        }
+    },
+    "repositories": [{
+        "type": "composer",
+        "url": "https://pkgs.nalogka.com"
+    }],
+    "require-dev": {
+        "phpunit/phpunit": "^7.4"
+    }
+}
