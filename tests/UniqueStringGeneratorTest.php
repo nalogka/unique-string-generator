@@ -64,6 +64,8 @@ class UniqueStringGeneratorTest extends TestCase
             [Generator::HEX_U, 'F', '15'],
             [Generator::HEX_U, 'FF', '255'],
             [Generator::HEX_U, 'FFFF', '65535'],
+            ['ABCD', 'B', '1'],
+            ['ABCD', 'DB', '13'],
         ];
     }
 
@@ -107,6 +109,7 @@ class UniqueStringGeneratorTest extends TestCase
             [Generator::DEC_ALPHA_L_U, 'co', /* hex */ '0300'],
             [Generator::DEC_ALPHA_L_U, 'bUI', /* hex */ 'b2e8'],
             [Generator::DEC_ALPHA_L_U, 'bUI6zOLZTrh', /* hex */ '8ac7230489e7ffff'],
+            ['ABCD', 'DB', /* hex */ '0d'],
         ];
     }
 
@@ -129,6 +132,7 @@ class UniqueStringGeneratorTest extends TestCase
             [Generator::DEC_ALPHA_L_U, /* hex */ 'b2e8', 'bUI'],
             [Generator::DEC_ALPHA_L_U, /* hex */ '8ac7230489e7ffff', 'bUI6zOLZTrh'],
             [Generator::HEX_L, /* hex */ '8ac7230489e7ffff', '8ac7230489e7ffff'],
+            ['ABCD', /* hex */ '0d', 'DB'],
         ];
     }
 }
