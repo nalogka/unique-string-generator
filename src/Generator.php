@@ -20,12 +20,12 @@ class Generator
      * @return mixed
      * @throws \Exception
      */
-    public static function generate($base, $length)
+    public static function generate($charset, $length)
     {
         $generated = '';
 
         for ($i = 0; $i < $length; $i++) {
-            $generated .= $base[random_int(0, strlen($base) - 1)];
+            $generated .= $charset[random_int(0, strlen($charset) - 1)];
         }
 
         return $generated;
