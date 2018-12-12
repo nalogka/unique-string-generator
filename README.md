@@ -9,7 +9,7 @@
 Например:
 
 ```php 
-Generator::generate('ABC', 5); // ACAAB
+Generator::generate('012', 5); // 02001
 ```
 
 Для удобства в класс добавлены константы, с наиболее часто употребимыми наборами символов:
@@ -25,8 +25,10 @@ Generator::HEX_L = '0123456789abcdef';
 
 ## Конвертер
 
-При помощи конвертера можно преобразовать данные из строки с известным набором символов, в десятичное представление, и наоборот.
+При помощи конвертера можно преобразовать сгенерированную строку с известным набором символов в бинарную строку и обратно (`Converter::toBinary()` и `Converter::fromBinary()`), а также в десятичное представление и обратно (`Converter::toDecimal()` и `Converter::fromDecimal()`).
 
-Для этого служат методы `Converter::toDecimal()` и `Converter::fromDecimal()`
-
-Также можно преобразовать десятичную строку в бинарную, и наоборот, при помощи методов `Converter::decimalToBinary()` и `Converter::binaryToDecimal` 
+```php
+$generated = Generator::generate('ABC', 5); // ACAAB
+$binStr = Converter::toBinary('ABC', $generated); // "\x37"
+Converter::fromBinary('ABC', $binStr, 5); // ACAAB, здесь последний аргумент нужен, чтоб восстановить исходный размер строки
+```
