@@ -92,41 +92,43 @@ class UniqueStringGeneratorTest extends TestCase
     /**
      * @param $input
      * @param $expectedOutput
-     * @dataProvider decimalToBinaryProvider
+     * @dataProvider toBinaryProvider
      */
-    public function testDecimalToBinary($input, $expectedOutput)
+    public function testToBinary($base, $input, $expectedOutput)
     {
-        $this->assertSame(base64_encode(pack('H*', $expectedOutput)), base64_encode(Converter::decimalToBinary($input)));
+        $this->assertSame($expectedOutput, unpack('H*', Converter::toBinary($base, $input))[1]);
     }
 
-    public function decimalToBinaryProvider()
+    public function toBinaryProvider()
     {
         return [
-            ['0', '00'],
-            ['48', '30'],
-            ['9999999999999999999', '8ac7230489e7ffff'],
-            ['3', '03'],
-            ['16', '10'],
+            [Generator::DEC_ALPHA_L_U, '0', /* hex */ '00'],
+            [Generator::DEC_ALPHA_L_U, 'M', /* hex */ '30'],
+            [Generator::DEC_ALPHA_L_U, 'co', /* hex */ '0300'],
+            [Generator::DEC_ALPHA_L_U, 'bUI', /* hex */ 'b2e8'],
+            [Generator::DEC_ALPHA_L_U, 'bUI6zOLZTrh', /* hex */ '8ac7230489e7ffff'],
         ];
     }
-
 
     /**
      * @param $input
      * @param $expectedOutput
-     * @dataProvider binaryToDecimalProvider
+     * @dataProvider fromBinaryProvider
      */
-    public function testBinaryToDecimal($input, $expectedOutput)
+    public function testFromBinary($base, $input, $expectedOutput)
     {
-        $this->assertSame($expectedOutput, Converter::binaryToDecimal(pack('H*', $input)));
+        $this->assertSame($expectedOutput, Converter::fromBinary($base, pack('H*', $input)));
     }
 
-    public function binaryToDecimalProvider()
+    public function fromBinaryProvider()
     {
         return [
-            ['01', '1'],
-            ['0101', '257'],
-            ['8ac7230489e7ffff', '9999999999999999999'],
+            [Generator::DEC_ALPHA_L_U, /* hex */ '00', '0'],
+            [Generator::DEC_ALPHA_L_U, /* hex */ '30', 'M'],
+            [Generator::DEC_ALPHA_L_U, /* hex */ '0300', 'co'],
+            [Generator::DEC_ALPHA_L_U, /* hex */ 'b2e8', 'bUI'],
+            [Generator::DEC_ALPHA_L_U, /* hex */ '8ac7230489e7ffff', 'bUI6zOLZTrh'],
+            [Generator::HEX_L, /* hex */ '8ac7230489e7ffff', '8ac7230489e7ffff'],
         ];
     }
 }

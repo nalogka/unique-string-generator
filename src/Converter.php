@@ -56,47 +56,42 @@ class Converter
         return $result ?: $charset[$decimal];
     }
 
+
     /**
-     * Функция приведения строки из десятичного представлекния в бинарное
-     * @param $string
+     * Упаковка строки с известным набором символов в бинарную строку
+     * @param string $charset Набор символов алфавита 
+     * @param string $string  Строка для преобразования
      * @return string
      */
-    public static function decimalToBinary($string)
+    public static function toBinary($charset, $string)
     {
-        bcscale(0);
-        $binary = '';
-        $string = bcadd(0, $string);
+        $decimalStr = self::toDecimal($charset, $string);
 
-        if ($string === '0') {
-            return "\x00";
+        if ($decimalStr === '0') {
+            return "\x0";
         }
 
-        while ($string !== '0') {
-            $binary = pack('C', bcmod($string, self::BINARY_SHIFT_SIZE)) . $binary; // Берем значение младшего байта в числе и дописываем в бинарном виде в начало результирующей строки
-            $string = bcdiv($string, self::BINARY_SHIFT_SIZE); // Сдвигаем исходное число на один байт вправо
+        $result = '';
+        while ($decimalStr !== '0') {
+            $result = pack('C', bcmod($decimalStr, 256)) . $result;
+            $decimalStr = bcdiv($decimalStr, 256);
         }
 
-        return $binary;
+        return $result;
     }
 
     /**
-     * Функция приведения строки из бинарного представления в десятичное
-     * @param $string
+     * Восстановления строки с известным набором символов из бинарной строки
+     * @param string $binaryString
      * @return string
      */
-    public static function binaryToDecimal($string)
+    public static function fromBinary($charset, $binaryString)
     {
-        bcscale(0);
-        $decimal = '0';
-        $i = 0;
-
-        while ($string) {
-            $decimal = bcadd($decimal, bcmul(current(unpack('C', substr($string, -1))), bcpow(2, 8 * $i++)));
-            $string = substr($string, 0, -1);
+        $decimalStr = '0';
+        for ($i = 0, $lastPos = strlen($binaryString) - 1; $i <= $lastPos; $i++) {
+            $decimalStr = bcadd($decimalStr, bcmul(unpack('C', $binaryString[$lastPos - $i])[1], bcpow(256, $i)));
         }
 
-        return $decimal;
+        return self::fromDecimal($charset, $decimalStr);
     }
-
-
 }
