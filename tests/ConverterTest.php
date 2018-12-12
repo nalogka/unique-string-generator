@@ -37,6 +37,7 @@ class ConverterTest extends TestCase
             [Generator::HEX_U, 'FFFF', '65535'],
             ['ABCD', 'B', '1'],
             ['ABCD', 'DB', '13'],
+            ['ABC', 'AAACCCCB', '241'],
         ];
     }
 
@@ -48,7 +49,8 @@ class ConverterTest extends TestCase
      */
     public function testFromDecimal($base, $input, $expectedOutput)
     {
-        $this->assertEquals($expectedOutput, Converter::fromDecimal($base, $input));
+        $length = strlen($expectedOutput);
+        $this->assertEquals($expectedOutput, Converter::fromDecimal($base, $input, $length));
     }
 
     public function fromDecimalProvider()
@@ -58,7 +60,7 @@ class ConverterTest extends TestCase
             [Generator::ALPHA_U, '0', 'A'],
             [Generator::ALPHA_U, '25', 'Z'],
             [Generator::ALPHA_U, '26', 'BA'],
-            ['ABC', '241', 'CCCCB'],
+            ['ABC', '241', 'AAACCCCB'],
         ];
     }
 
@@ -81,6 +83,7 @@ class ConverterTest extends TestCase
             [Generator::DEC_ALPHA_L_U, 'bUI', /* hex */ 'b2e8'],
             [Generator::DEC_ALPHA_L_U, 'bUI6zOLZTrh', /* hex */ '8ac7230489e7ffff'],
             ['ABCD', 'DB', /* hex */ '0d'],
+            ['ABC', 'ACAAB', /* hex */ '37'],
         ];
     }
 
@@ -91,7 +94,8 @@ class ConverterTest extends TestCase
      */
     public function testFromBinary($base, $input, $expectedOutput)
     {
-        $this->assertSame($expectedOutput, Converter::fromBinary($base, pack('H*', $input)));
+        $length = strlen($expectedOutput);
+        $this->assertSame($expectedOutput, Converter::fromBinary($base, pack('H*', $input), $length));
     }
 
     public function fromBinaryProvider()
@@ -104,6 +108,7 @@ class ConverterTest extends TestCase
             [Generator::DEC_ALPHA_L_U, /* hex */ '8ac7230489e7ffff', 'bUI6zOLZTrh'],
             [Generator::HEX_L, /* hex */ '8ac7230489e7ffff', '8ac7230489e7ffff'],
             ['ABCD', /* hex */ '0d', 'DB'],
+            ['ABC', /* hex */ '37', 'ACAAB'],
         ];
     }
 }

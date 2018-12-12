@@ -40,23 +40,19 @@ class Converter
      * @param string $string
      * @return int|string
      */
-    public static function fromDecimal($charset, $decimalStr)
+    public static function fromDecimal($charset, $decimalStr, $length)
     {
         $base = strlen($charset);
 
         $string = '';
         $decimalStr = bcadd('0', $decimalStr);
-
-        if ($decimalStr === '0') {
-            return  $charset[0];
-        }
         
         while ($decimalStr !== '0') {
             $string = $charset[bcmod($decimalStr, $base)] . $string;
             $decimalStr = bcdiv($decimalStr, $base);
         }
 
-        return $string;
+        return str_pad($string, $length, $charset[0], STR_PAD_LEFT);
     }
 
     /**
@@ -87,13 +83,13 @@ class Converter
      * @param string $binaryString
      * @return string
      */
-    public static function fromBinary($charset, $binaryString)
+    public static function fromBinary($charset, $binaryString, $length)
     {
         $decimalStr = '0';
         for ($i = 0, $lastPos = strlen($binaryString) - 1; $i <= $lastPos; $i++) {
             $decimalStr = bcadd($decimalStr, bcmul(unpack('C', $binaryString[$lastPos - $i])[1], bcpow(256, $i)));
         }
 
-        return self::fromDecimal($charset, $decimalStr);
+        return self::fromDecimal($charset, $decimalStr, $length);
     }
 }
