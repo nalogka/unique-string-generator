@@ -29,7 +29,7 @@ class UniqueStringGeneratorTest extends TestCase
             ['/^\d{4}$/', Generator::DEC, 4],
             ['/^([A-Z]){10}$/', Generator::ALPHA_U, 10],
             ['/^([a-z]){3}$/', Generator::ALPHA_L, 3],
-            ['/^([a-z0-9]){15}$/', Generator::ALPHA_U . Generator::DEC, 15],
+            ['/^([a-z0-9]){15}$/', Generator::ALPHA_L . Generator::DEC, 15],
             ['/^([A-Za-z0-9]){15}$/', Generator::ALPHA_U . Generator::ALPHA_L . Generator::DEC, 15],
             ['/^([a-f0-9]){16}$/', Generator::HEX_L, 16],
         ];
@@ -64,6 +64,69 @@ class UniqueStringGeneratorTest extends TestCase
             [Generator::HEX_U, 'F', '15'],
             [Generator::HEX_U, 'FF', '255'],
             [Generator::HEX_U, 'FFFF', '65535'],
+        ];
+    }
+
+    /**
+     * @param $base
+     * @param $input
+     * @param $expectedOutput
+     * @dataProvider fromDecimalProvider
+     */
+    public function testFromDecimal($base, $input, $expectedOutput)
+    {
+        $this->assertEquals($expectedOutput, Converter::fromDecimal($base, $input));
+    }
+
+    public function fromDecimalProvider()
+    {
+        return [
+            [Generator::DEC, '10', '10'],
+            [Generator::ALPHA_U, '0', 'A'],
+            [Generator::ALPHA_U, '25', 'Z'],
+            [Generator::ALPHA_U, '26', 'BA'],
+            ['ABC', '241', 'CCCCB'],
+        ];
+    }
+
+    /**
+     * @param $input
+     * @param $expectedOutput
+     * @dataProvider decimalToBinaryProvider
+     */
+    public function testDecimalToBinary($input, $expectedOutput)
+    {
+        $this->assertSame(base64_encode(pack('H*', $expectedOutput)), base64_encode(Converter::decimalToBinary($input)));
+    }
+
+    public function decimalToBinaryProvider()
+    {
+        return [
+            ['0', '00'],
+            ['48', '30'],
+            ['9999999999999999999', '8ac7230489e7ffff'],
+            ['3', '03'],
+            ['16', '10'],
+        ];
+    }
+
+
+    /**
+     * @param $input
+     * @param $expectedOutput
+     * @dataProvider binaryToDecimalProvider
+     */
+    public function testBinaryToDecimal($input, $expectedOutput)
+    {
+        $this->assertSame($expectedOutput, Converter::binaryToDecimal(pack('H*', $input)));
+    }
+
+    public function binaryToDecimalProvider()
+    {
+        return [
+            ['01', '1'],
+            ['0101', '257'],
+            ['8ac7230489e7ffff', '9999999999999999999'],
         ];
     }
 }
