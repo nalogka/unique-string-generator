@@ -4,19 +4,17 @@ namespace Nalogka\UniqueStringGenerator;
 
 class Converter
 {
-    const BINARY_SHIFT_SIZE = 1<<8; // 256
-
     /**
-     * Функция приведения строки с известным набором символов к десятичному представлению
-     * @param $charset
-     * @param $string
-     * @return int|string
+     * Приведение строки с известным набором символов к десятичному представлению
+     * @param string $charset
+     * @param string $string
+     * @return string
      */
     public static function toDecimal($charset, $string)
     {
         $base = strlen($charset);
 
-        $result = 0;
+        $decimalStr = '0';
 
         $lastDigit = strlen($string) - 1;
         for ($i = 0; $i <= $lastDigit; $i++) {
@@ -24,38 +22,42 @@ class Converter
             if (false === $position = strpos($charset, $char)) {
                 throw new \RuntimeException(
                     sprintf(
-                        'В приводимой к десятичному представлению строке присутствует недопустимый символ "%s".',
+                        'В строке присутствует недопустимый символ "%s".',
                         $char
                     )
                 );
             }
 
-            $result = bcadd($result, bcmul($position, bcpow($base, $i)));
+            $decimalStr = bcadd($decimalStr, bcmul($position, bcpow($base, $i)));
         }
 
-        return $result;
+        return $decimalStr;
     }
 
     /**
-     * Функция приведения строки из десятичного представления к строке с известным набором символов
-     * @param $charset
-     * @param $string
+     * Приведение строки из десятичного представления к строке с известным набором символов
+     * @param string $charset
+     * @param string $string
      * @return int|string
      */
-    public static function fromDecimal($charset, $decimal)
+    public static function fromDecimal($charset, $decimalStr)
     {
         $base = strlen($charset);
 
-        $result = '';
+        $string = '';
+        $decimalStr = bcadd('0', $decimalStr);
 
-        while ($decimal) {
-            $result = $charset[bcmod($decimal, $base)] . $result;
-            $decimal = bcdiv($decimal, $base);
+        if ($decimalStr === '0') {
+            return  $charset[0];
+        }
+        
+        while ($decimalStr !== '0') {
+            $string = $charset[bcmod($decimalStr, $base)] . $string;
+            $decimalStr = bcdiv($decimalStr, $base);
         }
 
-        return $result ?: $charset[$decimal];
+        return $string;
     }
-
 
     /**
      * Упаковка строки с известным набором символов в бинарную строку
@@ -70,7 +72,7 @@ class Converter
         if ($decimalStr === '0') {
             return "\x0";
         }
-
+        
         $result = '';
         while ($decimalStr !== '0') {
             $result = pack('C', bcmod($decimalStr, 256)) . $result;
