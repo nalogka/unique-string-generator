@@ -7,6 +7,9 @@ use Nalogka\UniqueStringGenerator\Converter;
 class ConverterTest extends TestCase
 {
     /**
+     * @param $base
+     * @param $input
+     * @param $expectedOutput
      * @dataProvider toDecimalProvider
      */
     public function testToDecimal($base, $input, $expectedOutput)
@@ -38,6 +41,7 @@ class ConverterTest extends TestCase
             ['ABCD', 'B', '1'],
             ['ABCD', 'DB', '13'],
             ['ABC', 'AAACCCCB', '241'],
+            [Generator::DEC, 12, '12'],
         ];
     }
 
@@ -60,6 +64,7 @@ class ConverterTest extends TestCase
             [Generator::ALPHA_U, '0', 'A'],
             [Generator::ALPHA_U, '25', 'Z'],
             [Generator::ALPHA_U, '26', 'BA'],
+            [Generator::DEC, 12, '12'],
             ['ABC', '241', 'AAACCCCB'],
         ];
     }
@@ -88,6 +93,7 @@ class ConverterTest extends TestCase
     }
 
     /**
+     * @param $base
      * @param $input
      * @param $expectedOutput
      * @dataProvider fromBinaryProvider
