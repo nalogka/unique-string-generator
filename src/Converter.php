@@ -36,9 +36,6 @@ class Converter
      */
     public static function fromBinary(string $charset, string $binaryString, int $length)
     {
-        var_dump($binaryString);
-        var_dump(strlen($binaryString) - 1);
-        var_dump($binaryString[0]);
         $decimalStr = '0';
         for ($i = 0, $lastPos = strlen($binaryString) - 1; $i <= $lastPos; $i++) {
             $decimalStr = bcadd($decimalStr, bcmul(unpack('C', $binaryString[$lastPos - $i])[1], bcpow(256, $i)));
